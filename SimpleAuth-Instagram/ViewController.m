@@ -18,7 +18,7 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];    
+    [super viewDidLoad];
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     self.accessToken = [userDefaults objectForKey:@"accessToken"];
     
@@ -35,12 +35,17 @@
     {
         NSLog(@"signed in");
         NSURLSession *session = [NSURLSession sharedSession];
-        NSString *urlString = [[NSString alloc] initWithFormat:@"https://api.instagram.com/v1/tags/search?q=snowy&access_token=%@",self.accessToken];
+        NSString *urlString = [[NSString alloc] initWithFormat:@"https://api.instagram.com/v1/tags/photobomb/media/recent?&access_token=%@",self.accessToken];
         NSURL *url = [NSURL URLWithString:urlString];
         NSURLRequest *request = [NSURLRequest requestWithURL:url];
         NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
-            NSString *text = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
-            NSLog(@"text:%@",text);
+//            NSString *text = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
+            
+            NSData *data = [[NSData alloc] initWithContentsOfURL:location];
+            NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            
+            NSArray *photos = [responseDictionary valueForKeyPath:@"data.images.standard_resolution.url"];
+            NSLog(@"%@", photos);
         }];
         [task resume];
     }
