@@ -11,7 +11,10 @@
 #import <SimpleAuth/SimpleAuth.h>
 
 @interface ViewController ()
+@property (strong, nonatomic) IBOutlet UIImageView *instagramImageView;
 @property (nonatomic) NSString *accessToken;
+@property (nonatomic, strong) NSArray *photos;
+@property (nonatomic, strong) NSData *data;
 @end
 
 @implementation ViewController
@@ -41,14 +44,23 @@
         NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
 //            NSString *text = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
             
-            NSData *data = [[NSData alloc] initWithContentsOfURL:location];
-            NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:data options:kNilOptions error:nil];
+            self.data = [[NSData alloc] initWithContentsOfURL:location];
+            NSDictionary *responseDictionary = [NSJSONSerialization JSONObjectWithData:self.data options:kNilOptions error:nil];
             
-            NSArray *photos = [responseDictionary valueForKeyPath:@"data.images.standard_resolution.url"];
-            NSLog(@"%@", photos);
+            self.photos = [responseDictionary valueForKeyPath:@"data.images.standard_resolution.url"];
+            NSLog(@"%@", self.photos);
         }];
         [task resume];
     }
+    
+    [self loadInstagramImage];
+}
+
+-(void)loadInstagramImage
+{
+    NSData *data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"http://scontent-b.cdninstagram.com/hphotos-xfp1/t51.2885-15/10483500_1448211665440862_427216422_n.jpg"]];
+    UIImage *image = [[UIImage alloc] initWithData:data];
+    self.instagramImageView.image = image;
 }
 
 
