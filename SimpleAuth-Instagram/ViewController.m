@@ -18,19 +18,7 @@
 
 - (void)viewDidLoad
 {
-    [super viewDidLoad];
-//    NSURLSession *session = [NSURLSession sharedSession];
-//    NSURL *url = [[NSURL alloc] initWithString:@"http://idrawcode.tumblr.com"];
-//    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
-//
-//    NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
-//        NSLog(@"%@", response);
-//        
-//        NSString *responseTest = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
-//        NSLog(@"responseTest: %@",responseTest);
-//    }];
-//    [task resume];
-    
+    [super viewDidLoad];    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     self.accessToken = [userDefaults objectForKey:@"accessToken"];
     
@@ -46,10 +34,16 @@
     else
     {
         NSLog(@"signed in");
+        NSURLSession *session = [NSURLSession sharedSession];
+        NSString *urlString = [[NSString alloc] initWithFormat:@"https://api.instagram.com/v1/tags/search?q=snowy&access_token=%@",self.accessToken];
+        NSURL *url = [NSURL URLWithString:urlString];
+        NSURLRequest *request = [NSURLRequest requestWithURL:url];
+        NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+            NSString *text = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
+            NSLog(@"text:%@",text);
+        }];
+        [task resume];
     }
-    
-    //token = 258596838.b40dce4.8b2066716a514e8ab7bdfe375af1d6de
-
 }
 
 
