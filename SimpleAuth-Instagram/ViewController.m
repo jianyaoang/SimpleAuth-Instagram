@@ -11,7 +11,7 @@
 #import <SimpleAuth/SimpleAuth.h>
 
 @interface ViewController ()
-
+@property (nonatomic) NSString *accessToken;
 @end
 
 @implementation ViewController
@@ -31,10 +31,25 @@
 //    }];
 //    [task resume];
     
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    self.accessToken = [userDefaults objectForKey:@"accessToken"];
+    
+    if (self.accessToken == nil)
+    {
+        [SimpleAuth authorize:@"instagram" completion:^(NSDictionary* responseObject, NSError *error) {
+            NSString *accessToken = responseObject[@"credentials"][@"token"];
+            [userDefaults setObject:accessToken forKey:@"accessToken"];
+            [userDefaults synchronize];
+            
+        }];
+    }
+    else
+    {
+        NSLog(@"signed in");
+    }
+    
     //token = 258596838.b40dce4.8b2066716a514e8ab7bdfe375af1d6de
-    [SimpleAuth authorize:@"instagram" completion:^(id responseObject, NSError *error) {
-        NSLog(@"response: %@", responseObject);
-    }];
+
 }
 
 
