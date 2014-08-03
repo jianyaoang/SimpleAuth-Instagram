@@ -17,13 +17,19 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+    NSURLSession *session = [NSURLSession sharedSession];
+    NSURL *url = [[NSURL alloc] initWithString:@"http://idrawcode.tumblr.com"];
+    NSURLRequest *request = [[NSURLRequest alloc] initWithURL:url];
+
+    NSURLSessionDownloadTask *task = [session downloadTaskWithRequest:request completionHandler:^(NSURL *location, NSURLResponse *response, NSError *error) {
+        NSLog(@"%@", response);
+        
+        NSString *responseTest = [[NSString alloc] initWithContentsOfURL:location encoding:NSUTF8StringEncoding error:nil];
+        NSLog(@"responseTest: %@",responseTest);
+    }];
+    [task resume];
 }
 
-- (void)didReceiveMemoryWarning
-{
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
-}
+
 
 @end
